@@ -6,5 +6,5 @@ export enum Roles {
 export class CreateUserDto {
   email: string;
   password: string;
-  roles: Roles[];
+  role: Roles[];
 }
