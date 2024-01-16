@@ -5,6 +5,7 @@ import { UsersService } from 'src/users/users.service';
 import { AuthUserDto } from './dto/authUserDto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 interface User extends CreateUserDto {
   id: number;
@@ -57,5 +58,12 @@ export class AuthService {
     const payload = { id: user.id, email: user.email, roles: user.role };
 
     return { accessToken: await this.jwtService.signAsync(payload) };
+  }
+
+  async createCookie(request: Response, token: string) {
+    request.cookie('accessToken', token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 1000 * 60 * 5),
+    });
   }
 }
