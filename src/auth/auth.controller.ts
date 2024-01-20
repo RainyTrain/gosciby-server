@@ -21,7 +21,7 @@ export class AuthController {
 
     const { accessToken } = token as { accessToken: string };
 
-    this.authService.createCookie(response, accessToken);
+    await this.authService.createCookie(response, accessToken);
 
     return token;
   }
