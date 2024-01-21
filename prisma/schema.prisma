@@ -19,8 +19,8 @@ model Profile {
   id Int  @id @default(autoincrement())
   name String
   surname String
-  birth DateTime
-  registered DateTime @default(now())
+  birth String
+  registered DateTime  @default(now()) @db.Date
   adress String
   avatar String
   user  User  @relation(fields: [userId], references: [id])

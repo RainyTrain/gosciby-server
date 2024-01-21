@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ProfileDto } from './dto/profileDto';
-import { ProfileUpdateDto } from './dto/profileUpdateDto';
+import { ProfileDto } from './dto/profile.dto';
+import { ProfileUpdateDto } from './dto/profileUpdate.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('profile')
