@@ -8,13 +8,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { CreateUserDto } from './dto/createUser.dto';
+import { RolesDecorator } from 'src/roles/roles.decorator';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { CreateUserDto, Roles } from './dto/createUser.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @RolesDecorator(Roles.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @Get()
   async getAll() {
     return this.usersService.getAllUsers();
@@ -25,13 +29,15 @@ export class UsersController {
     return this.usersService.createUser(userDto);
   }
 
-  @UseGuards(AuthGuard)
+  @RolesDecorator(Roles.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @Get(':id')
   async getUserById(@Param('id') id: string) {
     return this.usersService.getUserById(Number(id));
   }
 
-  @UseGuards(AuthGuard)
+  @RolesDecorator(Roles.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   async deleteUserById(@Param('id') id: string) {
     return this.usersService.deleteUserById(Number(id));
