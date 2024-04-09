@@ -17,8 +17,6 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @RolesDecorator(Roles.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
   @Get()
   async getAll() {
     return this.usersService.getAllUsers();

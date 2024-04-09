@@ -11,6 +11,7 @@ model User {
   id  Int @id @default(autoincrement())
   email String @unique
   password String 
+  accessTocken String?
   role  Role[] @default([USER])
   profile Profile?
 }
@@ -21,13 +22,73 @@ model Profile {
   surname String
   birth String
   registered DateTime  @default(now()) @db.Date
+  currency Currency
   adress String
-  avatar String
+  country String
+  avatar String?
   user  User  @relation(fields: [userId], references: [id])
   userId Int @unique
+  bookings Booking[]
+  feedback Feedback[]
+}
+
+model Accomodation {
+  id Int @id @default(autoincrement())
+  accomodationType AccomodationType
+  name String
+  description String
+  totalRooms Int
+  availableRooms Int
+  wifi Boolean
+  pets Boolean
+  coordinates String?
+  photos String[]
+  bookings Booking[]
+}
+
+model Booking {
+   id Int @id @default(autoincrement())
+   profile Profile @relation(fields: [profileId], references: [id])
+   profileId Int @unique
+   accomodation Accomodation @relation(fields: [accomodationId], references: [id])
+   accomodationId Int
+   checkInDate DateTime
+   checkOutDate DateTime
+   totalPrice Float
+   isComfirmed Boolean
+   bookingDate DateTime @default(now())
+   feedback Feedback[]
+   rating Float
+}
+
+model Feedback {
+  id Int @unique @default(autoincrement())
+  profile Profile @relation(fields: [profileId],references: [id])
+  profileId Int
+  booking Booking @relation(fields: [bookingId],references: [id])
+  bookingId Int
+  content String
+  commentDate DateTime @default(now())
+  stars Int
+}
+
+
+enum Currency {
+  USD
+  EUR
+  PLN
+  RUB
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+enum AccomodationType {
+  HOTEL
+  APARTMENT
+  HOSTEL
+  HOUSE
+  VILLA
 }

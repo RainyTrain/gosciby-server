@@ -17,6 +17,19 @@ export class ProfileService {
     return profile;
   }
 
+  async getProfileInfoWithUser(id: number) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { id: id },
+      include: { user: true },
+    });
+
+    if (!profile) {
+      throw NotFoundException;
+    }
+
+    return profile;
+  }
+
   async updateProfile(id: number, dto: ProfileUpdateDto) {
     const profile = await this.prisma.profile.update({
       where: { id: id },

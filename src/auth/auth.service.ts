@@ -60,8 +60,8 @@ export class AuthService {
     return { accessToken: await this.jwtService.signAsync(payload) };
   }
 
-  async createCookie(request: Response, token: string) {
-    request.cookie('accessToken', token, {
+  async createCookie(response: Response, token: string) {
+    response.cookie('accessToken', token, {
       httpOnly: true,
       expires: new Date(Date.now() + 1000 * 60 * 5),
     });

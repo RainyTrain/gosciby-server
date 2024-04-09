@@ -39,6 +39,12 @@ export class ProfileController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('full/:id')
+  async getFullProfile(@Param('id') id: string) {
+    return this.profileService.getProfileInfoWithUser(Number(id));
+  }
+
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async deleteProfile(@Param('id') id: string) {
     return this.profileService.deleteProfile(Number(id));

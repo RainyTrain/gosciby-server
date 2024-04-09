@@ -1,5 +1,12 @@
 import { IsInt, Length, Min } from 'class-validator';
 
+export enum Currency {
+  USD = 'USD',
+  EUR = 'EUR',
+  PLN = 'PLN',
+  RUB = 'RUB',
+}
+
 export class ProfileDto {
   @Length(5, 15)
   name: string;
@@ -10,9 +17,13 @@ export class ProfileDto {
   // create custom decorater to ensure proper date
   birth: string;
 
+  currency: Currency;
+
   adress: string;
 
-  avatar: string;
+  country: string;
+
+  avatar?: string;
 
   @IsInt()
   @Min(1)

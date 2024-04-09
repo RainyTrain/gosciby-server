@@ -11,7 +11,7 @@ export class CreateUserDto {
   @MaxLength(20, { message: 'Email is too long!' })
   email: string;
 
-  // create custom decorater to ensure that password contains special signs
+  // create custom decorator to ensure that password contains special signs
   @Length(5, 15)
   password: string;
 
