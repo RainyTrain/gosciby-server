@@ -15,5 +15,7 @@ export class CreateUserDto {
   @Length(5, 15)
   password: string;
 
+  refreshToken?: string;
+
   role?: Roles[];
 }

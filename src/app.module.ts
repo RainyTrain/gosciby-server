@@ -6,9 +6,17 @@ import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profile/profile.module';
 import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
+import { TokenModule } from './token/token.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, PrismaModule, ProfileModule, AdminModule],
+  imports: [
+    UsersModule,
+    AuthModule,
+    PrismaModule,
+    ProfileModule,
+    AdminModule,
+    TokenModule,
+  ],
   controllers: [MainController],
   providers: [AdminService],
 })

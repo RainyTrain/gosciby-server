@@ -1,5 +1,14 @@
-import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UsePipes,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { AuthService } from './auth.service';
 import { AuthUserDto } from './dto/authUser.dto';
@@ -22,10 +31,33 @@ export class AuthController {
   ) {
     const token = await this.authService.signIn(dto);
 
-    const { accessToken } = token as { accessToken: string };
+    const { refreshToken } = token as { refreshToken: string };
 
-    await this.authService.createCookie(response, accessToken);
+    await this.authService.setAccessTokenCookie(response, refreshToken);
 
     return token;
+  }
+
+  @UsePipes(ValidationPipe)
+  @Post('sign-out')
+  async signOut(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    await this.authService.signOut(request, response);
+  }
+
+  @Get('refresh')
+  async refreshAccessToken(@Req() request: Request) {
+    try {
+      const { refreshToken } = request.cookies;
+
+      const accessToken =
+        await this.authService.refreshAccessToken(refreshToken);
+
+      return accessToken;
+    } catch {
+      throw new UnauthorizedException();
+    }
   }
 }
