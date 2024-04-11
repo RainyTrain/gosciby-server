@@ -6,8 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileUpdateDto } from './dto/profileUpdate.dto';
@@ -48,5 +51,12 @@ export class ProfileController {
   @Delete(':id')
   async deleteProfile(@Param('id') id: string) {
     return this.profileService.deleteProfile(Number(id));
+  }
+
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('avatar')
+  async uploadAvatar(@UploadedFile() avatar: Express.Multer.File) {
+    return this.profileService.uploadAvatar(avatar);
   }
 }

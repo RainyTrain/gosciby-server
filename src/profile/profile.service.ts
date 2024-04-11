@@ -1,7 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileUpdateDto } from './dto/profileUpdate.dto';
+import { v4 as uuidv4 } from 'uuid';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProfileService {
@@ -61,5 +64,20 @@ export class ProfileService {
     }
 
     return profile;
+  }
+
+  async uploadAvatar(avatar: Express.Multer.File) {
+    const newFileName = uuidv4() + '.jpg';
+    const staticPath = path.resolve(__dirname, '..', '..', 'static', 'avatars');
+    try {
+      if (avatar.mimetype !== 'image/jpeg') {
+        throw new Error();
+      }
+      await fs.writeFileSync(path.join(staticPath, newFileName), avatar.buffer);
+
+      return 'Success!';
+    } catch (error) {
+      throw new HttpException('Error while uploading file', 400);
+    }
   }
 }

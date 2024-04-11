@@ -112,7 +112,7 @@ export class AuthService {
   async setAccessTokenCookie(response: Response, refreshToken: string) {
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 60 * 5),
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     });
   }
 }
