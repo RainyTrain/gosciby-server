@@ -8,6 +8,7 @@ import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
 import { TokenModule } from './token/token.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { AccomodationModule } from './accomodation/accomodation.module';
 import * as path from 'path';
 
 @Module({
@@ -21,6 +22,7 @@ import * as path from 'path';
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '..', 'static', 'avatars'),
     }),
+    AccomodationModule,
   ],
   controllers: [MainController],
   providers: [AdminService],

@@ -66,13 +66,27 @@ export class ProfileService {
     return profile;
   }
 
-  async uploadAvatar(avatar: Express.Multer.File) {
+  async uploadAvatar(id: number, avatar: Express.Multer.File) {
     const newFileName = uuidv4() + '.jpg';
     const staticPath = path.resolve(__dirname, '..', '..', 'static', 'avatars');
     try {
+      const profile = await this.prisma.profile.findFirst({
+        where: { id: id },
+      });
+
+      if (!profile) {
+        throw new Error();
+      }
+
       if (avatar.mimetype !== 'image/jpeg') {
         throw new Error();
       }
+
+      await this.prisma.profile.update({
+        where: { id: id },
+        data: { ...profile, avatar: newFileName } as ProfileUpdateDto,
+      });
+
       await fs.writeFileSync(path.join(staticPath, newFileName), avatar.buffer);
 
       return 'Success!';

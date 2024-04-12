@@ -55,8 +55,11 @@ export class ProfileController {
 
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  @Post('avatar')
-  async uploadAvatar(@UploadedFile() avatar: Express.Multer.File) {
-    return this.profileService.uploadAvatar(avatar);
+  @Post(':id/avatar')
+  async uploadAvatar(
+    @Param('id') id: number,
+    @UploadedFile() avatar: Express.Multer.File,
+  ) {
+    return this.profileService.uploadAvatar(Number(id), avatar);
   }
 }

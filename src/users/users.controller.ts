@@ -27,8 +27,7 @@ export class UsersController {
     return this.usersService.createUser(userDto);
   }
 
-  @RolesDecorator(Roles.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard)
   @Get(':id')
   async getUserById(@Param('id') id: string) {
     return this.usersService.getUserById(Number(id));
