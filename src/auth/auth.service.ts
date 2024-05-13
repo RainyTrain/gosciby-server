@@ -81,7 +81,7 @@ export class AuthService {
 
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { ...user, refreshToken: undefined },
+      data: { ...user, refreshToken: null },
     });
 
     response.clearCookie('refreshToken');

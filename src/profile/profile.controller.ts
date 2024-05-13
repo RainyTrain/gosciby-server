@@ -60,6 +60,6 @@ export class ProfileController {
     @Param('id') id: number,
     @UploadedFile() avatar: Express.Multer.File,
   ) {
-    return this.profileService.uploadAvatar(Number(id), avatar);
+    return await this.profileService.uploadAvatar(Number(id), avatar);
   }
 }

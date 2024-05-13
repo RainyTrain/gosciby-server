@@ -30,6 +30,7 @@ model Profile {
   userId Int @unique
   bookings Booking[]
   feedback Feedback[]
+  posts Accomodation[] 
 }
 
 model Accomodation {
@@ -43,7 +44,10 @@ model Accomodation {
   pets Boolean
   coordinates String?
   photos String[]
+  price Float
   bookings Booking[]
+  owner Profile @relation(fields: [ownerId], references: [id])
+  ownerId Int
 }
 
 model Booking {

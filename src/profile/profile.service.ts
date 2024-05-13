@@ -47,6 +47,7 @@ export class ProfileService {
   }
 
   async createNewProfile(dto: ProfileDto) {
+    console.log('dto', dto);
     const profile = await this.prisma.profile.create({ data: { ...dto } });
 
     if (!profile) {
@@ -67,6 +68,7 @@ export class ProfileService {
   }
 
   async uploadAvatar(id: number, avatar: Express.Multer.File) {
+    console.log('huuy');
     const newFileName = uuidv4() + '.jpg';
     const staticPath = path.resolve(__dirname, '..', '..', 'static', 'avatars');
     try {
@@ -78,7 +80,7 @@ export class ProfileService {
         throw new Error();
       }
 
-      if (avatar.mimetype !== 'image/jpeg') {
+      if (avatar.mimetype !== 'image/jpeg' && avatar.mimetype !== 'image/png') {
         throw new Error();
       }
 

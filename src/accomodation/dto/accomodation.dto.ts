@@ -14,6 +14,8 @@ export class AccomodationDto {
   availableRooms: number;
   wifi: boolean;
   pets: boolean;
+  price: number;
+  ownerId: number;
   coordinates?: string;
   photos: Array<string>;
 }

@@ -6,11 +6,17 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AccomodationService } from './accomodation.service';
 import { AccomodationDto } from './dto/accomodation.dto';
+import { AccomodationFilterDto } from './dto/accomodationFilterDto.dto';
 
 @Controller('accomodation')
 export class AccomodationController {
@@ -18,8 +24,16 @@ export class AccomodationController {
 
   @UseGuards(AuthGuard)
   @Get()
-  async getAllAccomodations() {
-    return this.accomodationService.getAllAccomodations();
+  async getAllAccomodations(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query?: AccomodationFilterDto,
+  ) {
+    return this.accomodationService.getAllAccomodations(query);
   }
 
   @UseGuards(AuthGuard)
@@ -32,6 +46,19 @@ export class AccomodationController {
   @Post('create')
   async createAccomodation(@Body() dto: AccomodationDto) {
     return this.accomodationService.createAccomodation(dto);
+  }
+
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FilesInterceptor('file'))
+  @Post(':id/photos')
+  async uploadAvatar(
+    @Param('id') id: number,
+    @UploadedFiles() photos: Array<Express.Multer.File>,
+  ) {
+    return await this.accomodationService.uploadAccomodationPhoto(
+      Number(id),
+      photos,
+    );
   }
 
   @UseGuards(AuthGuard)

@@ -29,5 +29,3 @@ export class ProfileDto {
   @Min(1)
   userId: number;
 }
-
-
