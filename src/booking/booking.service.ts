@@ -122,7 +122,7 @@ export class BookingService {
       const updatedBookings = await this.prismaService.booking.updateMany({
         where: {
           status: 'ACTIVE',
-          checkOutDate: {},
+          checkOutDate: { lte: new Date() },
         },
         data: { status: 'INACTIVE' },
       });

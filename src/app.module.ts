@@ -12,6 +12,7 @@ import { AccomodationModule } from './accomodation/accomodation.module';
 import { BookingModule } from './booking/booking.module';
 import * as path from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AccomodationModule,
     BookingModule,
     ScheduleModule.forRoot(),
+    FeedbackModule,
   ],
   controllers: [MainController],
   providers: [AdminService],
