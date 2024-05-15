@@ -24,9 +24,14 @@ export class BookingController {
     return this.bookingService.getBookingById(Number(id));
   }
 
-  @Post('/create')
+  @Post('create')
   async createNewBooking(@Body() dto: CreateNewBooking) {
     return await this.bookingService.createNewBooking(dto as CreateNewBooking);
+  }
+
+  @Post('change-status')
+  async changeBookingStatus() {
+    return this.bookingService.changeBookingStatus();
   }
 
   @Patch(':id')

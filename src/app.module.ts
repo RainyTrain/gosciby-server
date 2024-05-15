@@ -11,6 +11,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AccomodationModule } from './accomodation/accomodation.module';
 import { BookingModule } from './booking/booking.module';
 import * as path from 'path';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import * as path from 'path';
     }),
     AccomodationModule,
     BookingModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [MainController],
   providers: [AdminService],

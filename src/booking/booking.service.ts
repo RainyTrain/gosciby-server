@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { HttpException, Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateNewBooking } from './dto/createNewBookingDto.dto';
 
@@ -9,11 +10,13 @@ export class BookingService {
 
   async getAllBookings() {
     try {
-      const bookings = this.prismaService.booking.findMany();
+      const bookings = await this.prismaService.booking.findMany();
 
       if (!bookings) {
         throw new Error();
       }
+
+      return bookings;
     } catch (error) {
       throw new HttpException('Error while getting bookings', 400);
     }
@@ -59,7 +62,6 @@ export class BookingService {
         throw new Error();
       }
 
-      console.log('doshel', profile, booking, accomodation);
       const newBooking = await this.prismaService.booking
         .create({
           //@ts-ignore
@@ -75,28 +77,32 @@ export class BookingService {
 
   async updateBooking(id: number, dto: Partial<CreateNewBooking>) {
     try {
-      const booking = this.prismaService.booking.findUnique({
+      const booking = await this.prismaService.booking.findUnique({
         where: { id: id },
       });
+
+      if (booking?.isConfirmed) {
+        throw new Error();
+      }
 
       if (!booking) {
         throw new Error();
       }
 
-      const updatedBooking = this.prismaService.booking.update({
+      const updatedBooking = await this.prismaService.booking.update({
         where: { id: id },
         data: { ...dto },
       });
 
       return updatedBooking;
     } catch (error) {
-      throw new HttpException('Booking not found', 404);
+      throw new HttpException('Booking is already confirmed or not found', 404);
     }
   }
 
   async deleteBooking(id: number) {
     try {
-      const deletedBooking = this.prismaService.booking.delete({
+      const deletedBooking = await this.prismaService.booking.delete({
         where: { id: id },
       });
 
@@ -107,6 +113,27 @@ export class BookingService {
       return deletedBooking;
     } catch (error) {
       throw new HttpException('Booking not found', 404);
+    }
+  }
+
+  @Cron('* * 0 * * *', { timeZone: 'Europe/Minsk' })
+  async changeBookingStatus() {
+    try {
+      const updatedBookings = await this.prismaService.booking.updateMany({
+        where: {
+          status: 'ACTIVE',
+          checkOutDate: {},
+        },
+        data: { status: 'INACTIVE' },
+      });
+
+      if (!updatedBookings) {
+        throw new Error();
+      }
+
+      return updatedBookings;
+    } catch (error) {
+      throw new HttpException('Bookings not found', 404);
     }
   }
 }
