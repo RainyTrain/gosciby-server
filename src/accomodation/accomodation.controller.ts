@@ -7,12 +7,14 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AccomodationService } from './accomodation.service';
 import { AccomodationDto } from './dto/accomodation.dto';
@@ -25,15 +27,16 @@ export class AccomodationController {
   @UseGuards(AuthGuard)
   @Get()
   async getAllAccomodations(
+    @Req() req: Request,
     @Query(
       new ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
       }),
     )
-    query?: AccomodationFilterDto,
+    query: AccomodationFilterDto,
   ) {
-    return this.accomodationService.getAllAccomodations(query);
+    return this.accomodationService.getAllAccomodations(req, query);
   }
 
   @UseGuards(AuthGuard)

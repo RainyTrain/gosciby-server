@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AccomodationDto } from './dto/accomodation.dto';
 import { AccomodationFilterDto } from './dto/accomodationFilterDto.dto';
@@ -6,41 +6,72 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import { AccomodationUpdate } from './dto/accomodationUpdateDto.dto';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Request } from 'express';
 
 @Injectable()
 export class AccomodationService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private prismaService: PrismaService,
+  ) {}
 
-  async getAllAccomodations(dto?: AccomodationFilterDto) {
-    const accomodations = await this.prismaService.accomodation.findMany(
-      dto && {
-        where: {
-          pets: {
-            equals: dto.pets ?? undefined,
+  async getAllAccomodations(req: Request, dto: AccomodationFilterDto) {
+    try {
+      const cachedData =
+        Object.keys(dto).length == 0 &&
+        //@ts-ignore
+        (await this.cacheManager.get(`${req.user.id}/accomodations`));
+
+      if (cachedData) {
+        console.log(cachedData, 'cache');
+        return cachedData;
+      }
+
+      const accomodations = await this.prismaService.accomodation.findMany(
+        dto && {
+          where: {
+            pets: {
+              equals: dto.pets ?? undefined,
+            },
+            wifi: {
+              equals: dto.wifi ?? undefined,
+            },
+            accomodationType: { equals: dto.accomodationType ?? undefined },
+            availableRooms: { gt: dto.availableRooms ? 0 : undefined },
+            name: { contains: dto.query ?? undefined },
+            AND: [
+              { price: { gte: dto.lowPrice } },
+              { price: { lte: dto.highPrice } },
+            ],
           },
-          wifi: {
-            equals: dto.wifi ?? undefined,
-          },
-          accomodationType: { equals: dto.accomodationType ?? undefined },
-          availableRooms: { gt: dto.availableRooms ? 0 : undefined },
-          name: { contains: dto.query ?? undefined },
-          AND: [
-            { price: { gte: dto.lowPrice } },
-            { price: { lte: dto.highPrice } },
+          orderBy: [
+            { name: dto.sorKey == 'name' ? dto.orderBy : undefined },
+            {
+              availableRooms:
+                dto.sorKey == 'availableRooms' ? dto.orderBy : undefined,
+            },
+            { price: dto.sorKey == 'price' ? dto.orderBy : undefined },
           ],
         },
-        orderBy: [
-          { name: dto.sorKey == 'name' ? dto.orderBy : undefined },
-          {
-            availableRooms:
-              dto.sorKey == 'availableRooms' ? dto.orderBy : undefined,
-          },
-          { price: dto.sorKey == 'price' ? dto.orderBy : undefined },
-        ],
-      },
-    );
+      );
 
-    return accomodations;
+      if (!accomodations) {
+        throw new Error();
+      }
+
+      await this.cacheManager.set(
+        //@ts-ignore
+        `${req.user.id}/accomodations`,
+        accomodations,
+        1000 * 60 * 10,
+      );
+
+      return accomodations;
+    } catch (error) {
+      throw new HttpException('Accomodations not found', 404);
+    }
   }
 
   async getAccomodationById(id: number) {
