@@ -35,14 +35,6 @@ import redisConfig from './redis/redis.config';
       rootPath: path.resolve(__dirname, '..', 'static', 'avatars'),
     }),
     ConfigModule.forRoot({ load: [redisConfig], isGlobal: true }),
-    // CacheModule.register({
-    //   isGlobal: true,
-    //   useFactory: () => ({
-    //     store: redisStore,
-    //   }),
-    //   host: 'localhost',
-    //   port: 6379,
-    // }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async (config: ConfigService) => {

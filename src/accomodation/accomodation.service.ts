@@ -19,13 +19,14 @@ export class AccomodationService {
 
   async getAllAccomodations(req: Request, dto: AccomodationFilterDto) {
     try {
+      //@ts-ignore
+      const { id: userId } = req.user!;
+
       const cachedData =
         Object.keys(dto).length == 0 &&
-        //@ts-ignore
-        (await this.cacheManager.get(`${req.user.id}/accomodations`));
+        (await this.cacheManager.get(`${userId}/accomodations`));
 
       if (cachedData) {
-        console.log(cachedData, 'cache');
         return cachedData;
       }
 
@@ -61,12 +62,12 @@ export class AccomodationService {
         throw new Error();
       }
 
-      await this.cacheManager.set(
-        //@ts-ignore
-        `${req.user.id}/accomodations`,
-        accomodations,
-        1000 * 60 * 10,
-      );
+      Object.keys(dto).length == 0 &&
+        (await this.cacheManager.set(
+          `${userId}/accomodations`,
+          accomodations,
+          1000 * 60 * 10,
+        ));
 
       return accomodations;
     } catch (error) {
@@ -74,53 +75,86 @@ export class AccomodationService {
     }
   }
 
-  async getAccomodationById(id: number) {
-    const accomodation = await this.prismaService.accomodation.findFirst({
-      where: { id: id },
-    });
+  async getAccomodationById(req: Request, id: number) {
+    try {
+      //@ts-ignore
+      const { id: userId } = req.user!;
 
-    if (!accomodation) {
+      const cachedAccomodation = await this.cacheManager.get(
+        `${userId}/accomodation`,
+      );
+
+      if (cachedAccomodation) {
+        return cachedAccomodation;
+      }
+
+      const accomodation = await this.prismaService.accomodation.findFirst({
+        where: { id: id },
+      });
+
+      if (!accomodation) {
+        throw new Error();
+      }
+
+      await this.cacheManager.set(
+        `${userId}/accomodation`,
+        accomodation,
+        1000 * 60 * 10,
+      );
+
+      return accomodation;
+    } catch (error) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-
-    return accomodation;
   }
 
   async createAccomodation(dto: AccomodationDto) {
-    const newAccomodation = this.prismaService.accomodation.create({
-      data: dto,
-    });
+    try {
+      const newAccomodation = this.prismaService.accomodation.create({
+        data: dto,
+      });
 
-    if (!newAccomodation) {
+      if (!newAccomodation) {
+        throw new Error();
+      }
+
+      return newAccomodation;
+    } catch (error) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-
-    return newAccomodation;
   }
 
   async editAccomodation(id: number, dto: Partial<AccomodationDto>) {
-    const updatedAccomodation = this.prismaService.accomodation.update({
-      where: { id: id },
-      data: { ...dto },
-    });
+    try {
+      const updatedAccomodation = this.prismaService.accomodation.update({
+        where: { id: id },
+        data: { ...dto },
+      });
 
-    if (!updatedAccomodation) {
+      if (!updatedAccomodation) {
+        throw new Error();
+      }
+
+      return updatedAccomodation;
+    } catch (error) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-
-    return updatedAccomodation;
   }
 
   async deleteAccomodation(id: number) {
-    const deletedAccomodation = this.prismaService.accomodation.delete({
-      where: { id: id },
-    });
+    try {
+      const deletedAccomodation = this.prismaService.accomodation.delete({
+        where: { id: id },
+      });
 
-    if (!deletedAccomodation) {
+      if (!deletedAccomodation) {
+        throw new Error();
+      }
+
+      return deletedAccomodation;
+    } catch (error) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-
-    return deletedAccomodation;
   }
 
   async uploadAccomodationPhoto(

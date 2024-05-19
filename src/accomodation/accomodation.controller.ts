@@ -41,8 +41,8 @@ export class AccomodationController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getAccomodationById(@Param('id') id: number) {
-    return this.accomodationService.getAccomodationById(Number(id));
+  async getAccomodationById(@Param('id') id: number, @Req() req: Request) {
+    return this.accomodationService.getAccomodationById(req, Number(id));
   }
 
   @UseGuards(AuthGuard)

@@ -6,11 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileUpdateDto } from './dto/profileUpdate.dto';
@@ -37,8 +39,8 @@ export class ProfileController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getProfile(@Param('id') id: string) {
-    return this.profileService.getProfileInfo(Number(id));
+  async getProfile(@Req() req: Request, @Param('id') id: string) {
+    return this.profileService.getProfileInfo(req, Number(id));
   }
 
   @UseGuards(AuthGuard)
