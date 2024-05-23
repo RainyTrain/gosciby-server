@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AccomodationDto } from './dto/accomodation.dto';
-import { AccomodationFilterDto } from './dto/accomodationFilterDto.dto';
+import { AccomodationFilterDto } from './dto/accomodationFilter.dto';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
-import { AccomodationUpdate } from './dto/accomodationUpdateDto.dto';
+import { AccomodationUpdate } from './dto/accomodationUpdate.dto';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Request } from 'express';

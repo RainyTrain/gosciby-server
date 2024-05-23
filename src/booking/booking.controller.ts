@@ -4,13 +4,14 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BookingService } from './booking.service';
-import { CreateNewBooking } from './dto/createNewBookingDto.dto';
+import { CreateNewBooking } from './dto/createNewBooking.dto';
 
 @Controller('booking')
 export class BookingController {
@@ -23,8 +24,8 @@ export class BookingController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getBookingById(@Param('id') id: number) {
-    return this.bookingService.getBookingById(Number(id));
+  async getBookingById(@Param('id', new ParseIntPipe()) id: number) {
+    return this.bookingService.getBookingById(id);
   }
 
   @UseGuards(AuthGuard)
@@ -41,15 +42,15 @@ export class BookingController {
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updateBooking(
-    @Param('id') id: number,
+    @Param('id', new ParseIntPipe()) id: number,
     @Body() dto: Partial<CreateNewBooking>,
   ) {
-    return this.bookingService.updateBooking(Number(id), dto);
+    return this.bookingService.updateBooking(id, dto);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async deleteBooking(@Param('id') id: number) {
-    return this.bookingService.deleteBooking(Number(id));
+  async deleteBooking(@Param('id', new ParseIntPipe()) id: number) {
+    return this.bookingService.deleteBooking(id);
   }
 }

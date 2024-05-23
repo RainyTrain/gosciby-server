@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -23,8 +24,10 @@ export class FeedbackController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getFeedbacksForAccomodationId(@Param('id') id: number) {
-    return this.feedbackService.getFeedbacksForAccomodationId(Number(id));
+  async getFeedbacksForAccomodationId(
+    @Param('id', new ParseIntPipe()) id: number,
+  ) {
+    return this.feedbackService.getFeedbacksForAccomodationId(id);
   }
 
   @UseGuards(AuthGuard)
@@ -36,15 +39,15 @@ export class FeedbackController {
   @UseGuards(AuthGuard)
   @Patch(':id')
   async editFeedbackById(
-    @Param('id') id: number,
+    @Param('id', new ParseIntPipe()) id: number,
     @Body() dto: Partial<CreateFeedbackDto>,
   ) {
-    return this.feedbackService.editFeedbackById(Number(id), dto);
+    return this.feedbackService.editFeedbackById(id, dto);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async deleteFeedbackById(@Param('id') id: number) {
-    return this.feedbackService.deleteFeedbackById(Number(id));
+  async deleteFeedbackById(@Param('id', new ParseIntPipe()) id: number) {
+    return this.feedbackService.deleteFeedbackById(id);
   }
 }

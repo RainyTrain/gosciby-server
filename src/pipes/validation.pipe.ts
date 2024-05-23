@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import {
-  ArgumentMetadata,
-  BadRequestException,
-  Injectable,
-  PipeTransform,
-} from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { ValidationException } from 'src/exceptions/validation.exception';
+
+type ErrorMessage = {
+  property: string;
+  messages: Array<string>;
+};
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any, any> {
@@ -21,7 +22,14 @@ export class ValidationPipe implements PipeTransform<any, any> {
     const errors = await validate(object);
 
     if (errors.length) {
-      throw new BadRequestException('Validation failed');
+      const message: ErrorMessage[] = errors.map((error) => {
+        return {
+          property: error.property,
+          messages: Object.values(error.constraints!).map((value) => value),
+        };
+      });
+
+      throw new ValidationException(message);
     }
 
     return value;

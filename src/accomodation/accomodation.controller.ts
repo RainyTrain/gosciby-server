@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -18,7 +19,7 @@ import { Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AccomodationService } from './accomodation.service';
 import { AccomodationDto } from './dto/accomodation.dto';
-import { AccomodationFilterDto } from './dto/accomodationFilterDto.dto';
+import { AccomodationFilterDto } from './dto/accomodationFilter.dto';
 
 @Controller('accomodation')
 export class AccomodationController {
@@ -41,8 +42,11 @@ export class AccomodationController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getAccomodationById(@Param('id') id: number, @Req() req: Request) {
-    return this.accomodationService.getAccomodationById(req, Number(id));
+  async getAccomodationById(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Req() req: Request,
+  ) {
+    return this.accomodationService.getAccomodationById(req, id);
   }
 
   @UseGuards(AuthGuard)
@@ -55,27 +59,24 @@ export class AccomodationController {
   @UseInterceptors(FilesInterceptor('file'))
   @Post(':id/photos')
   async uploadAvatar(
-    @Param('id') id: number,
+    @Param('id', new ParseIntPipe()) id: number,
     @UploadedFiles() photos: Array<Express.Multer.File>,
   ) {
-    return await this.accomodationService.uploadAccomodationPhoto(
-      Number(id),
-      photos,
-    );
+    return await this.accomodationService.uploadAccomodationPhoto(id, photos);
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id/update')
   async updateAccomodation(
-    @Param('id') id: number,
+    @Param('id', new ParseIntPipe()) id: number,
     @Body() dto: AccomodationDto,
   ) {
-    return this.accomodationService.editAccomodation(Number(id), dto);
+    return this.accomodationService.editAccomodation(id, dto);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id/delete')
-  async deleteAccomodation(@Param('id') id: number) {
-    return this.accomodationService.deleteAccomodation(Number(id));
+  async deleteAccomodation(@Param('id', new ParseIntPipe()) id: number) {
+    return this.accomodationService.deleteAccomodation(id);
   }
 }

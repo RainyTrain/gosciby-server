@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MainController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -51,7 +50,7 @@ import redisConfig from './redis/redis.config';
       inject: [ConfigService],
     }),
   ],
-  controllers: [MainController],
+  controllers: [],
   providers: [AdminService],
 })
 export class AppModule {}

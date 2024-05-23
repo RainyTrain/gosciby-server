@@ -2,7 +2,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateNewBooking } from './dto/createNewBookingDto.dto';
+import { CreateNewBooking } from './dto/createNewBooking.dto';
 
 @Injectable()
 export class BookingService {
@@ -24,13 +24,15 @@ export class BookingService {
 
   async getBookingById(id: number) {
     try {
-      const booking = this.prismaService.booking.findMany({
+      const booking = await this.prismaService.booking.findFirst({
         where: { id: id },
       });
 
       if (!booking) {
         throw new Error();
       }
+
+      return booking;
     } catch (error) {
       throw new HttpException('Booking not found', 404);
     }

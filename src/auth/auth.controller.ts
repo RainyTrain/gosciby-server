@@ -6,10 +6,10 @@ import {
   Req,
   Res,
   UnauthorizedException,
-  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ValidationPipe } from 'src/pipes/validation.pipe';
+import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { AuthService } from './auth.service';
 import { AuthUserDto } from './dto/authUser.dto';
 
@@ -17,17 +17,20 @@ import { AuthUserDto } from './dto/authUser.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UsePipes(ValidationPipe)
   @Post('sign-up')
   async signUp(@Body() dto: AuthUserDto) {
     return await this.authService.signUp(dto);
   }
 
-  @UsePipes(ValidationPipe)
   @Post('sign-in')
   async signIn(
     @Res({ passthrough: true }) response: Response,
-    @Body() dto: AuthUserDto,
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: AuthUserDto,
   ) {
     const token = await this.authService.signIn(dto);
 
@@ -38,7 +41,6 @@ export class AuthController {
     return token;
   }
 
-  @UsePipes(ValidationPipe)
   @Post('sign-out')
   async signOut(
     @Req() request: Request,

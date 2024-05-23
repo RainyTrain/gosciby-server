@@ -1,4 +1,10 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesDecorator } from 'src/roles/roles.decorator';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -12,14 +18,15 @@ export class AdminController {
   @RolesDecorator(Roles.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @Post('make/:id')
-  async setAdmin(@Param('id') id: string) {
-    return await this.adminService.giveAdminRights(Number(id));
+  async setAdmin(@Param('id', new ParseIntPipe()) id: number) {
+    console.log(typeof id, 'check');
+    return await this.adminService.giveAdminRights(id);
   }
 
   @RolesDecorator(Roles.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @Post('delete/:id')
-  async deleteAdmin(@Param('id') id: string) {
+  async deleteAdmin(@Param('id', new ParseIntPipe()) id: number) {
     return await this.adminService.removeAdminRights(Number(id));
   }
 }

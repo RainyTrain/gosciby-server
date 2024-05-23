@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -29,14 +30,15 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getUserById(@Param('id') id: string) {
-    return this.usersService.getUserById(Number(id));
+  async getUserById(@Param('id', new ParseIntPipe()) id: number) {
+    console.log(typeof id);
+    return this.usersService.getUserById(id);
   }
 
   @RolesDecorator(Roles.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
-  async deleteUserById(@Param('id') id: string) {
-    return this.usersService.deleteUserById(Number(id));
+  async deleteUserById(@Param('id', new ParseIntPipe()) id: number) {
+    return this.usersService.deleteUserById(id);
   }
 }
