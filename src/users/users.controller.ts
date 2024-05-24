@@ -7,8 +7,10 @@ import {
   ParseIntPipe,
   Post,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { RolesDecorator } from 'src/roles/roles.decorator';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { CreateUserDto, Roles } from './dto/createUser.dto';
@@ -24,7 +26,14 @@ export class UsersController {
   }
 
   @Post('create')
-  async createNewUser(@Body() userDto: CreateUserDto) {
+  async createNewUser(
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    userDto: CreateUserDto,
+  ) {
     return this.usersService.createUser(userDto);
   }
 

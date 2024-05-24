@@ -18,7 +18,14 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('sign-up')
-  async signUp(@Body() dto: AuthUserDto) {
+  async signUp(
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: AuthUserDto,
+  ) {
     return await this.authService.signUp(dto);
   }
 

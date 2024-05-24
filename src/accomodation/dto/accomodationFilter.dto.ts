@@ -1,13 +1,21 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { AccomodationType } from './accomodation.dto';
 
-type OrderBy = 'asc' | 'desc';
+enum OrderBy {
+  ASC = 'asc',
+  DESC = 'desc',
+}
 
-type Sort = 'price' | 'availableRooms' | 'name';
+enum Sort {
+  PRICE = 'price',
+  AVAILABLE_ROOMS = 'availableRooms',
+  NAME = 'name',
+}
 
 export class AccomodationFilterDto {
   @IsOptional()
+  @IsEnum(AccomodationType)
   accomodationType?: AccomodationType;
 
   @IsOptional()
@@ -43,8 +51,10 @@ export class AccomodationFilterDto {
   query?: string;
 
   @IsOptional()
+  @IsEnum(Sort)
   sorKey?: Sort;
 
   @IsOptional()
-  orderBy?: OrderBy;
+  @IsEnum(OrderBy)
+  orderBy?: OrderBy = OrderBy.ASC;
 }

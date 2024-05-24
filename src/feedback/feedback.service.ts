@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateFeedbackDto } from './dto/CreateFeedbackDto.dto';
+import { CreateFeedbackDto } from './dto/createFeedback.dto';
 
 @Injectable()
 export class FeedbackService {

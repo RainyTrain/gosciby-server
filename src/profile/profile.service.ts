@@ -69,7 +69,7 @@ export class ProfileService {
     }
   }
 
-  async updateProfile(id: number, dto: ProfileUpdateDto) {
+  async updateProfile(id: number, dto: Partial<ProfileUpdateDto>) {
     try {
       const profile = await this.prismaService.profile.update({
         where: { id: id },

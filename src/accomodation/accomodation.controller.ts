@@ -17,9 +17,11 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { AccomodationService } from './accomodation.service';
 import { AccomodationDto } from './dto/accomodation.dto';
 import { AccomodationFilterDto } from './dto/accomodationFilter.dto';
+import { AccomodationUpdate } from './dto/accomodationUpdate.dto';
 
 @Controller('accomodation')
 export class AccomodationController {
@@ -32,7 +34,7 @@ export class AccomodationController {
     @Query(
       new ValidationPipe({
         transform: true,
-        forbidNonWhitelisted: true,
+        exceptionFactory: (errors) => showErrorFields(errors),
       }),
     )
     query: AccomodationFilterDto,
@@ -51,7 +53,15 @@ export class AccomodationController {
 
   @UseGuards(AuthGuard)
   @Post('create')
-  async createAccomodation(@Body() dto: AccomodationDto) {
+  async createAccomodation(
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: AccomodationDto,
+  ) {
     return this.accomodationService.createAccomodation(dto);
   }
 
@@ -69,7 +79,8 @@ export class AccomodationController {
   @Patch(':id/update')
   async updateAccomodation(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() dto: AccomodationDto,
+    @Body()
+    dto: AccomodationUpdate,
   ) {
     return this.accomodationService.editAccomodation(id, dto);
   }

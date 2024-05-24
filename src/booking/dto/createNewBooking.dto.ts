@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  IsDate,
-  IsDateString,
-  IsInt,
-  IsOptional,
-  Min,
-} from 'class-validator';
+import { IsBoolean, IsDate, IsInt, IsOptional, Min } from 'class-validator';
 
 export class CreateNewBooking {
   @IsInt()
@@ -19,7 +12,7 @@ export class CreateNewBooking {
   @IsDate()
   checkInDate: string;
 
-  @IsDateString()
+  @IsDate()
   checkOutDate: string;
 
   @IsDate()

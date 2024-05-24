@@ -8,9 +8,11 @@ import {
   Patch,
   Post,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { CreateFeedbackDto } from './dto/CreateFeedbackDto.dto';
+import { showErrorFields } from 'src/exceptions/showErrorFields';
+import { CreateFeedbackDto } from './dto/createFeedback.dto';
 import { FeedbackService } from './feedback.service';
 
 @Controller('feedback')
@@ -32,7 +34,14 @@ export class FeedbackController {
 
   @UseGuards(AuthGuard)
   @Post('create')
-  async createNewFeedback(@Body() dto: CreateFeedbackDto) {
+  async createNewFeedback(
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: CreateFeedbackDto,
+  ) {
     return this.feedbackService.createNewFeedback(dto);
   }
 

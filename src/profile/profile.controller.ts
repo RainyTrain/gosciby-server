@@ -11,10 +11,12 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileUpdateDto } from './dto/profileUpdate.dto';
 import { ProfileService } from './profile.service';
@@ -25,7 +27,14 @@ export class ProfileController {
 
   @UseGuards(AuthGuard)
   @Post('create')
-  async createProfile(@Body() profileDto: ProfileDto) {
+  async createProfile(
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    profileDto: ProfileDto,
+  ) {
     return this.profileService.createNewProfile(profileDto);
   }
 
@@ -33,7 +42,7 @@ export class ProfileController {
   @Patch('update/:id')
   async editProfile(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() profileDto: ProfileUpdateDto,
+    @Body() profileDto: Partial<ProfileUpdateDto>,
   ) {
     return this.profileService.updateProfile(id, profileDto);
   }

@@ -1,4 +1,12 @@
-import { IsInt, Length, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Length,
+  Min,
+} from 'class-validator';
 
 export enum Currency {
   USD = 'USD',
@@ -8,21 +16,27 @@ export enum Currency {
 }
 
 export class ProfileDto {
-  @Length(5, 15)
+  @Length(3, 15)
   name: string;
 
-  @Length(5, 15)
+  @Length(3, 15)
   surname: string;
 
-  // create custom decorater to ensure proper date
+  @Transform(({ value }) => {
+    return new Date(value).toISOString();
+  })
   birth: string;
 
+  @IsEnum(Currency)
   currency: Currency;
 
+  @IsString()
   adress: string;
 
+  @IsString()
   country: string;
 
+  @IsOptional()
   avatar?: string;
 
   @IsInt()

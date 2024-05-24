@@ -8,8 +8,10 @@ import {
   Patch,
   Post,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { BookingService } from './booking.service';
 import { CreateNewBooking } from './dto/createNewBooking.dto';
 
@@ -30,7 +32,14 @@ export class BookingController {
 
   @UseGuards(AuthGuard)
   @Post('create')
-  async createNewBooking(@Body() dto: CreateNewBooking) {
+  async createNewBooking(
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: CreateNewBooking,
+  ) {
     return await this.bookingService.createNewBooking(dto as CreateNewBooking);
   }
 

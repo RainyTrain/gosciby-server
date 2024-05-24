@@ -1,4 +1,11 @@
-import { IsEmail, Length, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsString,
+  Length,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export enum Roles {
   ADMIN = 'ADMIN',
@@ -7,15 +14,17 @@ export enum Roles {
 
 export class CreateUserDto {
   @IsEmail()
-  @MinLength(5, { message: 'Email is too short!' })
-  @MaxLength(20, { message: 'Email is too long!' })
+  @MinLength(5)
+  @MaxLength(20)
   email: string;
 
-  // create custom decorator to ensure that password contains special signs
+  @IsString()
   @Length(5, 15)
   password: string;
 
+  @IsString()
   refreshToken?: string;
 
+  @IsEnum(Roles)
   role?: Roles[];
 }

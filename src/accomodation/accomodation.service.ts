@@ -124,7 +124,7 @@ export class AccomodationService {
     }
   }
 
-  async editAccomodation(id: number, dto: Partial<AccomodationDto>) {
+  async editAccomodation(id: number, dto: AccomodationUpdate) {
     try {
       const updatedAccomodation = this.prismaService.accomodation.update({
         where: { id: id },
