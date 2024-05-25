@@ -1,3 +1,4 @@
 import { AccomodationDto } from './accomodation.dto';
+import { PartialType } from '@nestjs/swagger';
 
-export type AccomodationUpdate = Partial<AccomodationDto>;
+export class AccomodationUpdate extends PartialType(AccomodationDto) {}

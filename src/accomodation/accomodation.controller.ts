@@ -79,7 +79,12 @@ export class AccomodationController {
   @Patch(':id/update')
   async updateAccomodation(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body()
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
     dto: AccomodationUpdate,
   ) {
     return this.accomodationService.editAccomodation(id, dto);

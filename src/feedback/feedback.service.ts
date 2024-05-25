@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateFeedbackDto } from './dto/createFeedback.dto';
+import { UpdateFeedback } from './dto/updateFeedback.dto';
 
 @Injectable()
 export class FeedbackService {
@@ -54,7 +55,7 @@ export class FeedbackService {
     }
   }
 
-  async editFeedbackById(id: number, dto: Partial<CreateFeedbackDto>) {
+  async editFeedbackById(id: number, dto: UpdateFeedback) {
     try {
       const feedback = await this.prismaService.feedback.findUnique({
         where: { id: id },

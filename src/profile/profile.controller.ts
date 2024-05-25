@@ -42,7 +42,12 @@ export class ProfileController {
   @Patch('update/:id')
   async editProfile(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() profileDto: Partial<ProfileUpdateDto>,
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    profileDto: ProfileUpdateDto,
   ) {
     return this.profileService.updateProfile(id, profileDto);
   }

@@ -14,6 +14,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { BookingService } from './booking.service';
 import { CreateNewBooking } from './dto/createNewBooking.dto';
+import { UpdateBooking } from './dto/updateBooking.dto';
 
 @Controller('booking')
 export class BookingController {
@@ -52,7 +53,12 @@ export class BookingController {
   @Patch(':id')
   async updateBooking(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() dto: Partial<CreateNewBooking>,
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: UpdateBooking,
   ) {
     return this.bookingService.updateBooking(id, dto);
   }

@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsEnum,
+  IsOptional,
   IsString,
   Length,
   MaxLength,
@@ -22,9 +23,11 @@ export class CreateUserDto {
   @Length(5, 15)
   password: string;
 
+  @IsOptional()
   @IsString()
   refreshToken?: string;
 
+  @IsOptional()
   @IsEnum(Roles)
   role?: Roles[];
 }

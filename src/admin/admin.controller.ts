@@ -19,7 +19,6 @@ export class AdminController {
   @UseGuards(AuthGuard, RolesGuard)
   @Post('make/:id')
   async setAdmin(@Param('id', new ParseIntPipe()) id: number) {
-    console.log(typeof id, 'check');
     return await this.adminService.giveAdminRights(id);
   }
 

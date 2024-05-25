@@ -30,8 +30,13 @@ export class AccomodationService {
         return cachedData;
       }
 
+      const skip = dto.page - 1 > 0 ? (dto.page - 1) * dto.limit : 0;
+      const take = dto.limit;
+
       const accomodations = await this.prismaService.accomodation.findMany(
         dto && {
+          take,
+          skip,
           where: {
             pets: {
               equals: dto.pets ?? undefined,

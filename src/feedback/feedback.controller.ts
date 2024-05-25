@@ -13,6 +13,7 @@ import {
 import { AuthGuard } from 'src/auth/auth.guard';
 import { showErrorFields } from 'src/exceptions/showErrorFields';
 import { CreateFeedbackDto } from './dto/createFeedback.dto';
+import { UpdateFeedback } from './dto/updateFeedback.dto';
 import { FeedbackService } from './feedback.service';
 
 @Controller('feedback')
@@ -49,7 +50,12 @@ export class FeedbackController {
   @Patch(':id')
   async editFeedbackById(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() dto: Partial<CreateFeedbackDto>,
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => showErrorFields(errors),
+      }),
+    )
+    dto: UpdateFeedback,
   ) {
     return this.feedbackService.editFeedbackById(id, dto);
   }

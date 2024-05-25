@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { AccomodationType } from './accomodation.dto';
 
 enum OrderBy {
@@ -29,14 +29,14 @@ export class AccomodationFilterDto {
   pets?: boolean;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @Transform(({ value }) => {
     return Number(value);
   })
   lowPrice?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @Transform(({ value }) => {
     return Number(value);
   })
@@ -52,9 +52,21 @@ export class AccomodationFilterDto {
 
   @IsOptional()
   @IsEnum(Sort)
-  sorKey?: Sort;
+  sorKey?: Sort = Sort.PRICE;
 
   @IsOptional()
   @IsEnum(OrderBy)
   orderBy?: OrderBy = OrderBy.ASC;
+
+  @IsInt()
+  @Transform(({ value }) => {
+    return Number(value);
+  })
+  limit: number;
+
+  @IsInt()
+  @Transform(({ value }) => {
+    return Number(value);
+  })
+  page: number;
 }

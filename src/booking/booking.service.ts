@@ -3,6 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateNewBooking } from './dto/createNewBooking.dto';
+import { UpdateBooking } from './dto/updateBooking.dto';
 
 @Injectable()
 export class BookingService {
@@ -77,7 +78,7 @@ export class BookingService {
     }
   }
 
-  async updateBooking(id: number, dto: Partial<CreateNewBooking>) {
+  async updateBooking(id: number, dto: UpdateBooking) {
     try {
       const booking = await this.prismaService.booking.findUnique({
         where: { id: id },
