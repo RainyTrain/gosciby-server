@@ -1,4 +1,13 @@
-import { IsBoolean, IsDate, IsInt, IsOptional, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsBoolean,
+  IsDateString,
+  IsInt,
+  IsOptional,
+  Min,
+} from 'class-validator';
+
+type Status = 'ACTIVE' | 'INACTIVE';
 
 export class CreateNewBooking {
   @IsInt()
@@ -9,13 +18,19 @@ export class CreateNewBooking {
   @Min(1)
   accomodationId: number;
 
-  @IsDate()
+  @IsDateString()
+  @Transform(({ value }) => {
+    return new Date(value).toISOString();
+  })
   checkInDate: string;
 
-  @IsDate()
+  @IsDateString()
+  @Transform(({ value }) => {
+    return new Date(value).toISOString();
+  })
   checkOutDate: string;
 
-  @IsDate()
+  @IsInt()
   @Min(0)
   totalPrice: number;
 
@@ -25,4 +40,6 @@ export class CreateNewBooking {
   @IsOptional()
   @IsInt()
   rating?: number;
+
+  status: Status;
 }

@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
+  IsDate,
   IsEnum,
   IsInt,
   IsOptional,
@@ -22,6 +23,7 @@ export class ProfileDto {
   @Length(3, 15)
   surname: string;
 
+  @IsDate()
   @Transform(({ value }) => {
     return new Date(value).toISOString();
   })

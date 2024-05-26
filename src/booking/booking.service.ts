@@ -72,6 +72,10 @@ export class BookingService {
         })
         .catch((reason) => console.log(reason, 'reason'));
 
+      if (!newBooking) {
+        throw new Error();
+      }
+
       return newBooking;
     } catch (error) {
       throw new HttpException('Booking already exists', 400);
